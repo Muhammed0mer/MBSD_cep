@@ -9,7 +9,7 @@ void USART1_initTransmit(void);
 void USART1_sendChar(char data);
 
 void main(void){
-    char latch_status = '0';
+    char latch_status = '1';
     DDRB=0x08;
     USART1_initTransmit();
     USART1_initRecieve();

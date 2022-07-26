@@ -19,7 +19,7 @@ int main(void){
     DDRC=0x00;
     DDRB=0x08;
     DDRB &= ~(1<<PB0);
-    char latch_status = '0';
+    char latch_status = '1';
     USART1_initTransmit();
     USART1_initRecieve();
     char PIN[4];
@@ -37,6 +37,7 @@ int main(void){
         }
         else{
         pushButton();
+        latch_status='0';
         }
         
 
@@ -118,11 +119,11 @@ char USART1_recieveChar(void){
     }
 
 void pushButton(){
+    while(1){
 	char x = PINB;
 	char y = x & 0b00000001;
-    if(y==0){
-        PORTA=0b11000110;
+    if(y==1){
+        break;
     }
-    else{
-        PORTA=0b11000000;
-    }
+}
+}
