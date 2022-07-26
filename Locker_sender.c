@@ -81,7 +81,7 @@ void USART1_initTransmit(void)
 UBRR1H=0x00;
 UBRR1L=0x05;
 UCSR1B=(1<<TXEN1);
-UCSR1C=(3<<UCSZ10)|(1<<USB10);
+UCSR1C=(3<<UCSZ10)|(1<<USBS1);
 }
 void USART1_sendChar(char data)
 {
