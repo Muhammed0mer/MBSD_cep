@@ -10,15 +10,16 @@ void USART1_sendChar(char data);
 
 void main(void){
     DDRB=0x08;
+    USART1_initTransmit();
     USART1_initRecieve();
     char PIN[4]=['0','0','0','\0'];
     while(1){
         PINattempt=USART1_recievePIN();
         if(PINattempt==PIN){
-            USART0_sendChar('1');
+            USART1_sendChar('1');
         }
         else{
-            USART0_sendChar('0');
+            USART1_sendChar('0');
         }
     }
 
