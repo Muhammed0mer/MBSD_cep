@@ -70,8 +70,9 @@ char * USART1_recievePIN(void){
 			PINlength++;
 			recieved_data=USART1_recieveChar();
 		}
-		return PIN;
+		
 	}
+    return PIN;
 }
 
 void USART1_initTransmit(void)
