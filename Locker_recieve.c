@@ -24,6 +24,7 @@ int main(void){
 	char PIN[4]={'0', '0' , '0','\0'};
 	while(1){
 		char PINattempt[4]={};
+        USART1_sendChar(latch_status);
 		if (latch_status=='0'){
 			strcpy(PINattempt,USART1_recievePIN());
 			if(PINattempt==PIN){
@@ -34,7 +35,7 @@ int main(void){
 					latch_status='0';
 				}
 			}
-			USART1_sendChar(latch_status);
+			
 		}
 		
 	}

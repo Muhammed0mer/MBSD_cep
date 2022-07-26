@@ -24,7 +24,14 @@ int main(void){
     USART1_initRecieve();
     char PIN[4];
     while(1){
+        latch_status=USART1_recieveChar()
 
+        if (latch_status=='1'){
+            PORTA=0b11000000;
+        }
+        else{
+            PORTA=0b11000110;
+        }
         if(latch_status=='0'){
             key = getKey();
             if (key!=16){
@@ -43,14 +50,7 @@ int main(void){
 
         
         
-        latch_status=USART1_recieveChar()
-
-        if (latch_status=='1'){
-            PORTA=0b11000000;
-        }
-        else{
-            PORTA=0b11000110;
-        }
+        
        
 
         }
