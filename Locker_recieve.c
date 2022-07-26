@@ -21,7 +21,7 @@ int main(void){
 	DDRB=0x08;
 	USART1_initTransmit();
 	USART1_initRecieve();
-	char PIN[4]={'0', '0' , '0', '\0'};
+	char PIN[4]={'0', '0' , '0','\0'};
 	while(1){
 		char PINattempt[4]={};
 		if (latch_status=='0'){
@@ -60,8 +60,9 @@ char USART1_recieveChar(void){
 char * USART1_recievePIN(void){
 	unsigned char recieved_data = USART1_recieveChar();
 	static char PIN[4];
+    PIN[4]='\0';
 	int PINlength = 0;
-	while(PINlength<=4){
+	while(PINlength<4){
 		if(recieved_data=='#'){
 			PINlength=0;
 		}
