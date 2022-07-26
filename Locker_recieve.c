@@ -1,12 +1,34 @@
-void USART0_initRecieve(void){
-DDRD&=~(1<<PD0);
-DDRD|=(1<<PD1);
+#include <avr/io.h>
+#define F_CPU 1000000UL
+#include<util/delay.h>
+
+void USART1_initRecieve(void);
+void USART1_recieveChar(char data);
+void USART1_recievePIN(string data);
+
+void main(void){
+    DDRB=0x08;
+    USART1_initRecieve();
+    char PIN[4]=['0','0','0','\0'];
+    while(1){
+        PINattempt=USART1_recievePIN();
+        if(PINattempt==PIN){
+            PORTB=0x08;
+        }
+        else{
+            PORTB=0x00;
+        }
+    }
+
+}
+
+void USART1_initRecieve(void){
 DDRA=0xff;
 DDRC=0xff;
-UBRR0H=0x00;
-UBRR0L=0x05;
-UCSR0B=(1<<RXEN0);
-UCSR0C=(3<<UCSZ00)|(1<<USBS0);
+UBRR1H=0x00;
+UBRR1L=0x05;
+UCSR1B=(1<<RXEN1);
+UCSR1C=(3<<UCSZ00)|(1<<USBS0);
 }
 char USART0_recieveChar(void){
     unsigned char recieved_data;
@@ -30,10 +52,11 @@ const *char USART0_recievePIN(void){
             PINlength++;
             recieved_data=USART0_recieveChar;
         }
-        return PIN;
+    return PIN;
     }
     recieved_data=UDR0;    
     _delay_ms(100);
     return recieved_data;
     }
-}
+
+    void
