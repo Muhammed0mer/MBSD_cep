@@ -111,7 +111,6 @@ UCSR1C=(3<<UCSZ10)|(1<<USBS1);
 }
 char USART1_recieveChar(void){
     unsigned char recieved_data;
-    recieved_data=0;
     while(!(UCSR1A&(1<<UDRE1)));
     recieved_data=UDR1;    
     _delay_ms(100);
