@@ -2,21 +2,27 @@
 #define F_CPU 1000000UL
 #include<util/delay.h>
 
+#
+
 int GetKey(void);
 void USART1_initTransmit(void);
 void USART1_sendChar(char data);
 void USART1_sendString(string data);
+void USART1_initRecieve(void);
+char USART1_recieveChar(void);
 
 
 int main(void){
     char digit[20]={'1','2','3','A','5','6','B','7','8','9','C','0','*','0','#','D','\0'};
     int key;
     DDRD=0x00;
-    DDRA=0xff;
+    DDRA = 0xFF;
     DDRC=0x00;
     DDRB=0x08;
-    PORTA=digit[16];
+    DDRB &= ~(1<<PB0);
+    
     USART1_initTransmit();
+    USART1_initRecieve();
     char PIN[4];
     while(1){
 
@@ -30,20 +36,23 @@ int main(void){
             
 
         }
-        PORTB = 0x07;
-        _delay_ms(100);
+        
+        pass_match_status=USART1_recieveChar()
 
-        if (PINB==0x04){
-            
+        if (pass_match_status=='1'){
+            PORTA=0b11000000;
         }
         else{
-            USART1_sendString("PIN is incorrect");
+            PORTA=0b11000110;
+        }
+        //pushButton();
+
         }
 
 
     }
 
-}
+
 int GetKey(void){
     char x;
     int data;
@@ -66,7 +75,7 @@ void USART1_initTransmit(void)
 UBRR1H=0x00;
 UBRR1L=0x05;
 UCSR1B=(1<<TXEN1);
-UCSR1C=(3<<UCSZ00)|(1<<USBS0);
+UCSR1C=(3<<UCSZ10)|(1<<USB10);
 }
 void USART1_sendChar(char data)
 {
@@ -87,3 +96,28 @@ void USART1_sendString(char *data)
     }
 }
 
+void USART1_initRecieve(void){
+
+UBRR1H=0x00;
+UBRR1L=0x05;
+UCSR1B=(1<<RXEN1);
+UCSR1C=(3<<UCSZ10)|(1<<USBS1);
+}
+char USART1_recieveChar(void){
+    unsigned char recieved_data;
+    recieved_data=0;
+    while(!(UCSR1A&(1<<UDRE1)));
+    recieved_data=UDR1;    
+    _delay_ms(100);
+    return recieved_data;
+    }
+
+// void pushButton(){
+// 	char x = PINB;
+// 	char y = x & 0b00000001;
+//     if(y==0){
+//         PORTA=0b11000110;
+//     }
+//     else{
+//         PORTA=0b11000000;
+//     }
