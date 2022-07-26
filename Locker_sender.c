@@ -19,32 +19,38 @@ int main(void){
     DDRC=0x00;
     DDRB=0x08;
     DDRB &= ~(1<<PB0);
-    
+    char latch_status = '0';
     USART1_initTransmit();
     USART1_initRecieve();
     char PIN[4];
     while(1){
 
-
-        key = getKey();
-
-        if (key!=16){
+        if(latch_status=='0'){
+            key = getKey();
+            if (key!=16){
         
             USART0_sendChar(digit[key]);
 
             
 
         }
+        }
+        else{
+        pushButton();
+        }
         
-        pass_match_status=USART1_recieveChar()
 
-        if (pass_match_status=='1'){
+        
+        
+        latch_status=USART1_recieveChar()
+
+        if (latch_status=='1'){
             PORTA=0b11000000;
         }
         else{
             PORTA=0b11000110;
         }
-        //pushButton();
+       
 
         }
 
@@ -62,12 +68,12 @@ int getKey(void){
     }
     return 16;
 }
-char() wait_for_pin(void){
-    string pin;
-    while(1){
-        pin 
-    }
-}
+// char() wait_for_pin(void){
+//     string pin;
+//     while(1){
+//         pin 
+//     }
+// }
 void USART1_initTransmit(void)
 {
 
@@ -111,12 +117,12 @@ char USART1_recieveChar(void){
     return recieved_data;
     }
 
-// void pushButton(){
-// 	char x = PINB;
-// 	char y = x & 0b00000001;
-//     if(y==0){
-//         PORTA=0b11000110;
-//     }
-//     else{
-//         PORTA=0b11000000;
-//     }
+void pushButton(){
+	char x = PINB;
+	char y = x & 0b00000001;
+    if(y==0){
+        PORTA=0b11000110;
+    }
+    else{
+        PORTA=0b11000000;
+    }

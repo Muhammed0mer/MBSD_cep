@@ -9,18 +9,26 @@ void USART1_initTransmit(void);
 void USART1_sendChar(char data);
 
 void main(void){
+    char latch_status = '0';
     DDRB=0x08;
     USART1_initTransmit();
     USART1_initRecieve();
     char PIN[4]=['0','0','0','\0'];
     while(1){
-        PINattempt=USART1_recievePIN();
-        if(PINattempt==PIN){
-            USART1_sendChar('1');
-        }
+        char PINattempt[4];
+        if (latch_status=='0'){
+            PINattempt=USART1_recievePIN();
+            if(PINattempt==PIN){
+                latch_status='1';
+            }
         else{
-            USART1_sendChar('0');
+            if(USART1_recieveChar()=='1'){
+                latch_status='0';  
+            }
+            }
+            USART1_sendChar(latch_status);
         }
+        
     }
 
 }
