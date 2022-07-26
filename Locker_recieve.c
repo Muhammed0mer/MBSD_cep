@@ -73,7 +73,7 @@ char y = 0;
     y=PINA & 0x01;
     if(y==0){
         while(!(UCSR1A&(1<<UDRE1)));
-        UDR0=data;
+        UDR1=data;
         _delay_ms(100);
     }
 }

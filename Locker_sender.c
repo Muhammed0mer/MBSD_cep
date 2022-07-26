@@ -4,10 +4,9 @@
 
 
 
-int GetKey(void);
+int getKey(void);
 void USART1_initTransmit(void);
 void USART1_sendChar(char data);
-void USART1_sendString(string data);
 void USART1_initRecieve(void);
 char USART1_recieveChar(void);
 
@@ -53,7 +52,7 @@ int main(void){
     }
 
 
-int GetKey(void){
+int getKey(void){
     char x;
     int data;
     x=PINC;
@@ -83,18 +82,18 @@ char y = 0;
     y=PINA & 0x01;
     if(y==0){
         while(!(UCSR1A&(1<<UDRE1)));
-        UDR0=data;
+        UDR1=data;
         _delay_ms(100);
     }
 }
-void USART1_sendString(char *data)
-{
-    while(*data!='\0')
-    {
-        USART0_sendChar(*data);
-        data++;
-    }
-}
+// void USART1_sendString(char *data)
+// {
+//     while(*data!='\0')
+//     {
+//         USART0_sendChar(*data);
+//         data++;
+//     }
+// }
 
 void USART1_initRecieve(void){
 
