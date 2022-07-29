@@ -16,6 +16,13 @@ char * USART1_recievePass();
 void USART1_sendStatus(char data);
 
 int main(void){
+	DDRB |= 1<<PB0; // declaring PB0 as op pin for OCO 
+	// Initializing timer for servo
+	TCCR0 &= ~(1<<FOC0); // FOC0 is 0 for PWM mode
+	TCCR0 |= (1<<WGM01)|(1<<WGM00);
+	TCCR0 |= (1<<CS01)|(1<<CS00);
+	TCCR0 |= (1<<COM01);
+	OCR0 = 23;
 	
 	DDRC = 0xff; // for debugging
 	
@@ -29,9 +36,10 @@ int main(void){
 	
 	char PIN[5]={3, 3 , 3, 3,'\0'};
 	while(1){
-		char PINattempt[5]={};
+		char PINattempt[5];
 			_delay_ms(100);
 		//PORTC=latch_status;
+		PORTC=latch_status;
 		USART1_sendStatus(latch_status);
 		//_delay_ms(1000);
 		
@@ -48,18 +56,21 @@ int main(void){
 			
 			if(!(strcmp(PINattempt,PIN))){ // pass matched
 				latch_status=1; // opening the latch
+				OCR0 = 35;
 			}
  		
  			}
 			else{
 				
- 				while(USART1_recieveChar()==1){} // push button not pressed
-					 PORTC=0b10101010;
+ 				while(USART1_recieveChar()!=3); // push button not pressed
+					 //PORTC=0b10101010;
  					latch_status=2;
- 				
+					 OCR0=23;
+ 					
 			}
 		}
 	}
+	
 
 void USART1_config(void)          // to configure USART1
 {
@@ -73,16 +84,16 @@ void USART1_config(void)          // to configure USART1
 char * USART1_recievePass(void){
 	USART1_sendStatus(2);
 	char recieved_data;
-	static char PIN[5];
+	static char PIN[5]={};
 	PIN[4]='\0';
 	int PINlength = 0;
 	while(PINlength<4){
 			recieved_data=USART1_recieveChar();
 			PORTC=recieved_data;
 			PIN[PINlength]=recieved_data;
-			PINlength++;
+			PINlength=PINlength+1;
 			USART1_sendStatus(2);
-			
+			_delay_ms(100);
 		}
 		
 	return PIN;
