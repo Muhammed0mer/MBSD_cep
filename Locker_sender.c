@@ -2,12 +2,10 @@
  * Transmitter.c
  *
  * Created: 7/26/2022 1:56:22 PM
- * Author : TLS
+ * Author : TLS, Muhammed Omer
  */ 
 
 #include <avr/io.h>
-#define F_CPU 1000000UL
-#include<util/delay.h>
 
 
 void USART1_config(void);
@@ -21,12 +19,11 @@ int main(void){
 	
 		
 	DDRC=0b00000000; 
-	DDRE=0xff;
 	// Keypad config
 	char digit[20]={1,2,3,'A',4,5,6,'B',7,8,9,'C','*',0,'#','D','\0'};
 	int key;
 	DDRD=0x00;			// Port D as i/p for keypad
-	//DDRC &= ~(1<<PC0);	// PC0 as ip to read 
+	
 	
 	DDRB |= (1<<PB1);  // PB1 as op to give DE = 0 to DE pin of keypad
 	
@@ -45,47 +42,34 @@ int main(void){
 	
 	int PINlen=0;
 	
-	char btn;
-	_delay_ms(1000);
-//	char latch_status = '0'; // initilly latch is closed
-//	char PIN[4];
-
 	while(1){
-//		PORTA=0b11000000; debugging
+
 	
 		latch_status=USART1_recieveChar();
 		
 		
 		if (latch_status==1){		// means latch is open
 			PORTA=0b11000000;
-			PINlen=0;
-			pushButton();
-			//latch_status=2;
+			pushButton();			//code gets stuck here until push button pressed
 			USART1_sendChar(3);
 		}
 		if(latch_status==2){		// means latch is closed
 			PORTA=0b11000110;
-		
-			key=getKey();
-			
-			//_delay_ms(3000);
 					
-				
-				while((key==16)){
-					PORTE=PINlen;
-					if (PINlen==4){
-						PINlen=0;
-						break;
-					}
+				PINlen=0;
+				while(PINlen<4){
+	
 					key=getKey();
+					if(key!=16 ){
+											
+						USART1_sendChar(digit[key]);
+						PINlen++;
+					}
 				};
-					
-				if(key!=16){
+				
+				
 					
 				
-				USART1_sendChar(digit[key]);
-				PINlen++;
-				}
 				
 		}
 		
@@ -96,20 +80,18 @@ int main(void){
 
 // to get keypad key pressed position
 int getKey(void){
-	_delay_ms(100);
-	char x;
+	char x=0;
 	int data;
 
 	PORTB &= ~(0b00000010); // PB1 assigned 0 for DE
 	
-	x = PINC  ;
+	x = PINC;
 	
 			// if data available
-		 
-		//if((data>=0 && data<=2)| (data>=4 && data<=6) | (data>=8 && data <=10) | (data==13)){
 			if(x==0x01){
+						
 						data=(PIND & 0x0f);
-						//PORTA=data;
+						while(x==0x01){x = PINC;}                           // we don't want to get keys while the user holds down a key
 						return data;
 						
 			}
@@ -117,12 +99,6 @@ int getKey(void){
 	return 16;
 }
 
-// char() wait_for_pin(void){
-//     string pin;
-//     while(1){
-//         pin
-//     }
-// }
 
 void USART1_config(void)          // to configure USART1
 {
@@ -136,17 +112,8 @@ void USART1_sendChar(char data){
 	while(!(UCSR1A&(1<<UDRE1)));
 	
 	UDR1=data;
-	_delay_ms(100);
-}
+	}
 
-// void USART1_sendString(char *data)
-// {
-//     while(*data!='\0')
-//     {
-//         USART0_sendChar(*data);
-//         data++;
-//     }
-// }
 
 char USART1_recieveChar(void){          // function to receive latch status after pass match from Receiver
 	char recieved_data;
@@ -155,8 +122,7 @@ char USART1_recieveChar(void){          // function to receive latch status afte
 	recieved_data=UDR1;
 	
 
-	_delay_ms(100);
-	
+		
 	return recieved_data;
 }
 
